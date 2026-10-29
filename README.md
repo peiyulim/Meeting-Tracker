@@ -6,6 +6,7 @@ A single-page meeting action tracker. Add actions with an owner and due date, gr
 
 - `index.html` – the whole app (HTML, CSS and JS; loads `supabase-js` from a CDN)
 - `vercel.json` – static-site settings for Vercel (no build step)
+- `lock-down.sql` – one-time SQL that removes the old open-access policies
 
 ## Deploy to Vercel
 
@@ -16,9 +17,10 @@ A single-page meeting action tracker. Add actions with an owner and due date, gr
 
 ## Supabase
 
-The app talks to the Supabase project set at the top of the script in `index.html` (`SUPABASE_URL` and `SUPABASE_KEY`). The key is a publishable key, which is designed to be public. Tables used:
+The app uses the Supabase project set at the top of the script in `index.html` (`SUPABASE_URL`, `SUPABASE_KEY` – a publishable key, safe to expose).
 
-- `meeting_actions` (id, text, owner, due, done, created_at)
-- `salespeople` (id, name, created_at)
-
-Both tables have Row Level Security enabled with open policies, so anyone with the link can read and edit. To restrict access, add Supabase Auth and tighten the policies.
+- **Sign-in:** Supabase Auth (`auth.users`). Usernames map to `<username>@example.com`.
+- **Tables:** `meeting_actions`, `salespeople`, `profiles` (linked to `auth.users`, holds display name and role `admin`/`member`).
+- **Edge function `manage-users`:** admin-only; creates users with an initial password and resets passwords.
+- **Row Level Security:** only signed-in users can read or write. Run `lock-down.sql` once if the old open policies are still present.
+- Admins get a **Users** button in the app to add people and reset passwords. Everyone can change their own password with **Password**.

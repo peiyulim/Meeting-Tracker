@@ -10,18 +10,19 @@
   :root {
     --page: #f3f3f2;
     --yellow: #fef28a;
-    --yellow-deep: #f6e46a;
     --ink: #111111;
     --ink-soft: #5c5a3c;
     --paper: rgba(255,255,255,.62);
     --line: rgba(17,17,17,.14);
     --red: #d62d20;
     --red-bg: rgba(214,45,32,.12);
+    --green: #1f8a4c;
     --done: rgba(17,17,17,.38);
     --sans: "Inter Tight", "Helvetica Neue", Helvetica, Arial, sans-serif;
     --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   }
   * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
   body { margin: 0; background: var(--page); color: var(--ink); font: 19px/1.45 var(--sans); }
   .frame {
     margin: 18px auto; max-width: 1180px; min-height: calc(100vh - 36px);
@@ -30,20 +31,32 @@
   }
   main { max-width: 880px; margin: 0 auto; }
 
-  .topbar { display: flex; justify-content: space-between; align-items: center; margin: 0 -4px 56px; }
+  .topbar { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; margin: 0 -4px 48px; }
   .brand { font-weight: 800; font-size: 22px; letter-spacing: -0.03em; }
-  .mono, label, .status, .stat-label, .link, .small-mono { font-family: var(--mono); text-transform: uppercase; letter-spacing: .14em; font-size: 12px; }
-  .status { display: inline-flex; align-items: center; gap: 8px; color: var(--ink); }
+  .topright { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; justify-content: flex-end; }
+  label, .status, .link, .mono { font-family: var(--mono); text-transform: uppercase; letter-spacing: .14em; font-size: 12px; }
+  .status { display: inline-flex; align-items: center; gap: 8px; }
   .status::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--ink); }
-  .status.live::before { background: #1f8a4c; box-shadow: 0 0 0 4px rgba(31,138,76,.18); }
+  .status.live::before { background: var(--green); box-shadow: 0 0 0 4px rgba(31,138,76,.18); }
   .status.off::before { background: var(--red); }
+
+  .userbox { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .userbox .name { font-weight: 700; margin-right: 4px; }
+  .pillbtn {
+    font-family: var(--mono); text-transform: uppercase; letter-spacing: .12em; font-size: 11px; font-weight: 700;
+    background: transparent; color: var(--ink); border: 1.5px solid var(--ink); border-radius: 999px; padding: 7px 14px; cursor: pointer;
+  }
+  .pillbtn:hover { background: var(--ink); color: var(--yellow); }
+  .pillbtn.solid { background: var(--ink); color: var(--yellow); }
 
   .hero { text-align: center; margin-bottom: 8px; }
   .hero .eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .2em; text-transform: uppercase; }
-  .hero h1 { font-family: var(--sans); font-weight: 900; letter-spacing: -0.055em; line-height: .95; font-size: clamp(44px, 9vw, 92px); margin: 14px 0 12px; }
+  .hero h1 { font-weight: 900; letter-spacing: -0.055em; line-height: .95; font-size: clamp(44px, 9vw, 92px); margin: 14px 0 12px; }
   .hero p { margin: 0; font-family: var(--mono); font-size: 13px; letter-spacing: .04em; }
 
-  .error { background: var(--red-bg); color: var(--red); border: 1.5px solid var(--red); border-radius: 16px; padding: 12px 18px; margin: 20px 0 0; font-weight: 600; }
+  .error, .ok { border-radius: 16px; padding: 12px 18px; margin: 18px 0 0; font-weight: 600; }
+  .error { background: var(--red-bg); color: var(--red); border: 1.5px solid var(--red); }
+  .ok { background: rgba(31,138,76,.14); color: #14633a; border: 1.5px solid var(--green); }
 
   .stats {
     display: flex; justify-content: center; gap: 6px; width: fit-content; max-width: 100%;
@@ -61,7 +74,7 @@
   form.add { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 30px; }
   form.add .what { grid-column: 1 / -1; }
   label { display: block; margin-bottom: 6px; color: var(--ink-soft); }
-  select, input[type=text], input[type=date] {
+  select, input[type=text], input[type=password], input[type=date] {
     width: 100%; font: inherit; padding: 13px 18px; color: var(--ink);
     border: 1.5px solid var(--ink); border-radius: 16px; background: #fffdf0;
   }
@@ -73,6 +86,7 @@
   button.primary { align-self: end; background: var(--ink); color: var(--yellow); }
   button.secondary { background: transparent; color: var(--ink); }
   button.primary:hover { transform: translateY(-1px); }
+  button.primary:disabled { opacity: .5; cursor: wait; }
   button.secondary:hover { background: var(--ink); color: var(--yellow); }
 
   .newperson { grid-column: 1 / -1; border-top: 1.5px dashed var(--line); padding-top: 18px; margin-top: 4px; }
@@ -83,6 +97,21 @@
   .avatar { flex: none; border-radius: 50%; display: inline-grid; place-content: center; color: var(--yellow); font-weight: 800; letter-spacing: .02em; user-select: none; }
   .who { display: inline-flex; align-items: center; gap: 14px; }
   .mood { flex: none; width: 36px; height: 36px; }
+
+  .login { max-width: 460px; margin: 36px auto 0; display: grid; gap: 16px; }
+  .login button.primary { width: 100%; }
+  .login .error { margin: 0; }
+
+  .users { margin-bottom: 30px; }
+  .users h2 { margin: 0 0 12px; font-size: 28px; font-weight: 800; letter-spacing: -0.035em; }
+  .urow { display: flex; align-items: center; gap: 14px; padding: 12px 0; border-top: 1.5px solid var(--line); }
+  .urow:first-of-type { border-top: 0; }
+  .urow .info { flex: 1; min-width: 0; }
+  .urow .info b { font-size: 19px; }
+  .urow .info div { font-family: var(--mono); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-soft); }
+  .userform { display: grid; grid-template-columns: 1.3fr 1.3fr .8fr; gap: 14px; margin-top: 18px; padding-top: 18px; border-top: 1.5px dashed var(--line); }
+  .userform .hint { grid-column: 1 / -1; font-family: var(--mono); font-size: 12px; letter-spacing: .06em; color: var(--ink-soft); }
+  .userform button { grid-column: 1 / -1; justify-self: start; }
 
   .group { margin-bottom: 20px; }
   .group h2 { display: flex; justify-content: space-between; align-items: center; font-size: 28px; font-weight: 800; letter-spacing: -0.035em; margin: 0 0 10px; }
@@ -117,13 +146,14 @@
 
   @media (max-width: 700px) {
     .frame { margin: 8px; padding: 18px 16px 50px; border-radius: 22px; }
-    .topbar { margin-bottom: 34px; }
-    form.add { grid-template-columns: 1fr; }
+    .topbar { margin-bottom: 30px; }
+    form.add, .userform { grid-template-columns: 1fr; }
     .card { padding: 20px 18px; }
     .item.overdue { margin: 0 -18px; padding-left: 18px; padding-right: 18px; }
     .seg { padding: 8px 14px; gap: 6px; flex-direction: column; align-items: center; }
     .seg b { font-size: 28px; }
     .newperson .row { flex-direction: column; }
+    .topright { justify-content: flex-start; }
   }
 </style>
 </head>
@@ -132,50 +162,106 @@
 <main>
   <div class="topbar">
     <div class="brand">action tracker*</div>
-    <div class="status wait" id="status">Connecting…</div>
+    <div class="topright">
+      <div class="userbox" id="userbox" hidden>
+        <span id="userAvatar"></span>
+        <span class="name" id="userName"></span>
+        <button class="pillbtn" id="btnUsers" type="button" hidden>Users</button>
+        <button class="pillbtn" id="btnPw" type="button">Password</button>
+        <button class="pillbtn solid" id="btnOut" type="button">Sign out</button>
+      </div>
+      <div class="status wait" id="status">Connecting…</div>
+    </div>
   </div>
 
-  <section class="hero">
-    <div class="eyebrow">( team actions )</div>
-    <h1>Nothing agreed gets forgotten.</h1>
-    <p>Add it. Own it. Tick it off.</p>
-  </section>
-  <div class="error" id="error" role="alert" hidden></div>
-
-  <section class="stats" aria-label="Summary">
-    <div class="seg open"><b id="nOpen">0</b><span>Open</span></div>
-    <div class="seg done"><b id="nDone">0</b><span>Done</span></div>
-    <div class="seg overdue" id="overdueCard"><b id="nOver">0</b><span>Overdue</span></div>
-  </section>
-
-  <form class="card add" id="addForm" autocomplete="off">
-    <div class="what">
-      <label for="what">Action</label>
-      <input type="text" id="what" placeholder="What was agreed?" required maxlength="200">
+  <!-- SIGN IN -->
+  <section id="loginView" hidden>
+    <div class="hero">
+      <div class="eyebrow">( sign in )</div>
+      <h1>Welcome back.</h1>
+      <p>Sign in to see what's been agreed.</p>
     </div>
-    <div>
-      <label for="owner">Salesperson (owner)</label>
-      <select id="owner" required></select>
-    </div>
-    <div>
-      <label for="due">Due date</label>
-      <input type="date" id="due" required>
-    </div>
-    <button class="primary" type="submit">Add action →</button>
-    <div class="newperson">
-      <label>( team )</label>
-      <div class="team" id="team"></div>
-      <label for="newPerson">New salesperson</label>
-      <div class="row">
-        <input type="text" id="newPerson" placeholder="Type a name, e.g. Wei Jie" maxlength="40">
-        <button class="secondary" type="button" id="addPerson">Add person +</button>
+    <form class="card login" id="loginForm">
+      <div>
+        <label for="loginUser">Username</label>
+        <input type="text" id="loginUser" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="e.g. peiyu" required>
       </div>
-    </div>
-  </form>
+      <div>
+        <label for="loginPass">Password</label>
+        <input type="password" id="loginPass" autocomplete="current-password" required>
+      </div>
+      <button class="primary" type="submit">Sign in →</button>
+      <div class="error" id="loginError" role="alert" hidden></div>
+    </form>
+  </section>
 
-  <section id="groups"></section>
+  <!-- APP -->
+  <div id="appView" hidden>
+    <section class="hero">
+      <div class="eyebrow">( team actions )</div>
+      <h1>Nothing agreed gets forgotten.</h1>
+      <p>Add it. Own it. Tick it off.</p>
+    </section>
+    <div class="error" id="error" role="alert" hidden></div>
+    <div class="ok" id="notice" role="status" hidden></div>
 
-  <div class="footer"><button class="link" id="clearDone" type="button">Clear completed →</button></div>
+    <section class="stats" aria-label="Summary">
+      <div class="seg open"><b id="nOpen">0</b><span>Open</span></div>
+      <div class="seg done"><b id="nDone">0</b><span>Done</span></div>
+      <div class="seg overdue" id="overdueCard"><b id="nOver">0</b><span>Overdue</span></div>
+    </section>
+
+    <!-- USER MANAGEMENT (admins only) -->
+    <section class="card users" id="usersPanel" hidden>
+      <h2>Users</h2>
+      <div id="userList"></div>
+      <form class="userform" id="userForm" autocomplete="off">
+        <div>
+          <label for="uName">Name</label>
+          <input type="text" id="uName" maxlength="40" placeholder="e.g. Wei Jie" required>
+        </div>
+        <div>
+          <label for="uPass">Initial password</label>
+          <input type="text" id="uPass" value="password" minlength="6" required>
+        </div>
+        <div>
+          <label for="uRole">Role</label>
+          <select id="uRole"><option value="member">Member</option><option value="admin">Admin</option></select>
+        </div>
+        <div class="hint" id="uHint">Username to sign in: —</div>
+        <button class="primary" type="submit">Add user →</button>
+      </form>
+    </section>
+
+    <form class="card add" id="addForm" autocomplete="off">
+      <div class="what">
+        <label for="what">Action</label>
+        <input type="text" id="what" placeholder="What was agreed?" required maxlength="200">
+      </div>
+      <div>
+        <label for="owner">Salesperson (owner)</label>
+        <select id="owner" required></select>
+      </div>
+      <div>
+        <label for="due">Due date</label>
+        <input type="date" id="due" required>
+      </div>
+      <button class="primary" type="submit">Add action →</button>
+      <div class="newperson">
+        <label>( team )</label>
+        <div class="team" id="team"></div>
+        <label for="newPerson">New salesperson</label>
+        <div class="row">
+          <input type="text" id="newPerson" placeholder="Type a name, e.g. Wei Jie" maxlength="40">
+          <button class="secondary" type="button" id="addPerson">Add person +</button>
+        </div>
+      </div>
+    </form>
+
+    <section id="groups"></section>
+
+    <div class="footer"><button class="link" id="clearDone" type="button">Clear completed →</button></div>
+  </div>
 </main>
 </div>
 
@@ -185,29 +271,56 @@
   var SUPABASE_URL = 'https://mktqkopvppmwjgfnjlqn.supabase.co';
   var SUPABASE_KEY = 'sb_publishable_YJkt9WKGpn3vZu3VWvELKA_05R3WJ2N';
   var TABLE = 'meeting_actions';
+  var EMAIL_DOMAIN = 'example.com'; // usernames are stored in Supabase Auth as <username>@example.com
 
   var $ = function (id) { return document.getElementById(id); };
-  var actions = [];
-  var db = null;
+  var db = null, session = null, profile = null, channel = null;
+  var actions = [], people = [];
 
-  function setStatus(state, msg) {
-    var s = $('status');
-    s.className = 'status ' + state;
-    s.textContent = msg;
+  /* ---------- helpers ---------- */
+  function el(tag, cls, text) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text != null) e.textContent = text;
+    return e;
   }
-  function showError(msg) {
-    var b = $('error');
-    b.textContent = msg;
-    b.hidden = !msg;
+  function slug(s) { return String(s).toLowerCase().replace(/[^a-z0-9]/g, ''); }
+  function toEmail(u) {
+    u = u.trim();
+    return u.indexOf('@') > -1 ? u.toLowerCase() : slug(u) + '@' + EMAIL_DOMAIN;
+  }
+  function setStatus(state, msg) { var s = $('status'); s.className = 'status ' + state; s.textContent = msg; }
+  function showError(msg) { var b = $('error'); b.textContent = msg; b.hidden = !msg; }
+  var noticeTimer;
+  function notify(msg) {
+    var n = $('notice'); n.textContent = msg; n.hidden = !msg;
+    clearTimeout(noticeTimer);
+    if (msg) noticeTimer = setTimeout(function () { n.hidden = true; }, 5000);
   }
   function fail(err, what) {
     console.error(what, err);
-    showError(what + ' ' + (err && err.message ? err.message : '') + ' Check your connection and try again.');
+    var m = err && err.message ? err.message : '';
+    if (/jwt|expired|not authenticated/i.test(m)) { db.auth.signOut(); return; }
+    showError(what + ' ' + m + ' Check your connection and try again.');
   }
 
-  var people = [];
+  function todayStr() {
+    var d = new Date();
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  }
+  function isOverdue(a) { return !a.done && a.due < todayStr(); }
+  function fmtDate(s, done) {
+    var p = s.split('-');
+    var d = new Date(+p[0], +p[1] - 1, +p[2]);
+    var t = todayStr();
+    var label = d.toLocaleDateString(undefined, { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+    if (done) return 'Due ' + label;
+    if (s === t) return 'Due today · ' + label;
+    var diff = Math.round((d - new Date(+t.slice(0, 4), +t.slice(5, 7) - 1, +t.slice(8, 10))) / 86400000);
+    if (diff < 0) return Math.abs(diff) + (Math.abs(diff) === 1 ? ' day' : ' days') + ' overdue · ' + label;
+    return 'Due ' + label;
+  }
 
-  // Avatar: initials on a muted colour picked from the name, so each person always looks the same
   var AVATAR_COLORS = ['#111111', '#3d3a1c', '#5b4a12', '#6b2e22', '#2f4a3a', '#33405a', '#4a2f4f', '#5c5a3c', '#7a4a1f', '#26434a', '#444444', '#6a1f2e'];
   function avatarEl(name, size) {
     var h = 5381;
@@ -222,8 +335,6 @@
     a.setAttribute('aria-hidden', 'true');
     return a;
   }
-
-  // Mood faces: happy (orange accent) for done, sad (red) for overdue
   function moodEl(kind) {
     var happy = kind === 'happy';
     var ns = 'http://www.w3.org/2000/svg';
@@ -232,10 +343,10 @@
     svg.setAttribute('class', 'mood');
     svg.setAttribute('role', 'img');
     svg.setAttribute('aria-label', happy ? 'Done' : 'Overdue');
-    var color = happy ? '#111111' : '#d62d20';
+    var eye = happy ? '#fef28a' : '#fff';
     svg.innerHTML =
-      '<circle cx="18" cy="18" r="17" fill="' + color + '"/>' +
-      '<circle cx="12.5" cy="14.5" r="2.4" fill="' + (happy ? '#fef28a' : '#fff') + '"/><circle cx="23.5" cy="14.5" r="2.4" fill="' + (happy ? '#fef28a' : '#fff') + '"/>' +
+      '<circle cx="18" cy="18" r="17" fill="' + (happy ? '#111111' : '#d62d20') + '"/>' +
+      '<circle cx="12.5" cy="14.5" r="2.4" fill="' + eye + '"/><circle cx="23.5" cy="14.5" r="2.4" fill="' + eye + '"/>' +
       (happy
         ? '<path d="M10.5 21 Q18 29 25.5 21" fill="none" stroke="#fef28a" stroke-width="2.6" stroke-linecap="round"/>'
         : '<path d="M11 26 Q18 18.5 25 26" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/>' +
@@ -246,6 +357,16 @@
     return svg;
   }
 
+  /* ---------- data: actions ---------- */
+  async function load() {
+    var res = await db.from(TABLE).select('*').order('created_at', { ascending: true });
+    if (res.error) { fail(res.error, 'Could not load actions.'); return; }
+    actions = res.data;
+    showError('');
+    render();
+  }
+
+  /* ---------- data: salespeople ---------- */
   function renderPeople(select) {
     var sel = $('owner');
     var keep = select || sel.value;
@@ -266,14 +387,12 @@
       team.appendChild(chip);
     });
   }
-
   async function loadPeople() {
     var res = await db.from('salespeople').select('*').order('name', { ascending: true });
     if (res.error) return fail(res.error, 'Could not load salespeople.');
     people = res.data;
     renderPeople();
   }
-
   async function addPerson() {
     var input = $('newPerson');
     var name = input.value.trim().replace(/\s+/g, ' ');
@@ -293,41 +412,7 @@
     $('what').focus();
   }
 
-  async function load() {
-    var res = await db.from(TABLE).select('*').order('created_at', { ascending: true });
-    if (res.error) { fail(res.error, 'Could not load actions.'); setStatus('off', 'Offline'); return; }
-    actions = res.data;
-    showError('');
-    render();
-  }
-
-  function todayStr() {
-    var d = new Date();
-    var m = String(d.getMonth() + 1).padStart(2, '0');
-    var day = String(d.getDate()).padStart(2, '0');
-    return d.getFullYear() + '-' + m + '-' + day;
-  }
-  function isOverdue(a) { return !a.done && a.due < todayStr(); }
-
-  function fmtDate(s, done) {
-    var p = s.split('-');
-    var d = new Date(+p[0], +p[1] - 1, +p[2]);
-    var t = todayStr();
-    var label = d.toLocaleDateString(undefined, { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
-    if (done) return 'Due ' + label;
-    if (s === t) return 'Due today · ' + label;
-    var diff = Math.round((d - new Date(+t.slice(0,4), +t.slice(5,7) - 1, +t.slice(8,10))) / 86400000);
-    if (diff < 0) return Math.abs(diff) + (Math.abs(diff) === 1 ? ' day' : ' days') + ' overdue · ' + label;
-    return 'Due ' + label;
-  }
-
-  function el(tag, cls, text) {
-    var e = document.createElement(tag);
-    if (cls) e.className = cls;
-    if (text != null) e.textContent = text;
-    return e;
-  }
-
+  /* ---------- render actions ---------- */
   function render() {
     var open = 0, done = 0, over = 0;
     actions.forEach(function (a) {
@@ -345,7 +430,6 @@
       return;
     }
 
-    // group by owner (case-insensitive), groups with overdue first, then alphabetical
     var map = {};
     actions.forEach(function (a) {
       var k = a.owner.trim().toLowerCase();
@@ -359,9 +443,7 @@
         return a.due < b.due ? -1 : a.due > b.due ? 1 : 0;
       });
     });
-    groups.sort(function (a, b) {
-      return (b.over > 0) - (a.over > 0) || a.name.localeCompare(b.name);
-    });
+    groups.sort(function (a, b) { return (b.over > 0) - (a.over > 0) || a.name.localeCompare(b.name); });
 
     groups.forEach(function (g) {
       var card = el('div', 'card group');
@@ -383,7 +465,7 @@
         cb.setAttribute('aria-label', 'Mark done: ' + a.text);
         cb.addEventListener('change', async function () {
           var prev = a.done;
-          a.done = cb.checked; render();               // optimistic
+          a.done = cb.checked; render();
           var res = await db.from(TABLE).update({ done: a.done }).eq('id', a.id);
           if (res.error) { a.done = prev; render(); fail(res.error, 'Could not update the action.'); }
         });
@@ -391,7 +473,6 @@
         var body = el('div', 'body');
         body.appendChild(el('div', 'text', a.text));
         body.appendChild(el('div', 'due', fmtDate(a.due, a.done)));
-
         var mood = a.done ? moodEl('happy') : isOverdue(a) ? moodEl('sad') : null;
 
         var del = el('button', 'del', '×');
@@ -412,13 +493,140 @@
     });
   }
 
+  /* ---------- auth ---------- */
+  function renderUserbox() {
+    var n = profile.display_name;
+    $('userAvatar').innerHTML = '';
+    $('userAvatar').appendChild(avatarEl(n, 34));
+    $('userName').textContent = n;
+    $('btnUsers').hidden = profile.role !== 'admin';
+    $('userbox').hidden = false;
+  }
+
+  function subscribe() {
+    if (channel) db.removeChannel(channel);
+    channel = db.channel('meeting-live')
+      .on('postgres_changes', { event: '*', schema: 'public', table: TABLE }, load)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'salespeople' }, loadPeople)
+      .subscribe(function (state) {
+        if (state === 'SUBSCRIBED') setStatus('live', 'Live');
+        else if (state === 'CHANNEL_ERROR' || state === 'TIMED_OUT' || state === 'CLOSED') setStatus('off', 'Reconnecting…');
+      });
+  }
+
+  async function startApp(s) {
+    session = s;
+    setStatus('wait', 'Connecting…');
+    var r = await db.from('profiles').select('*').eq('id', s.user.id).single();
+    profile = r.data || { display_name: s.user.email, username: s.user.email, role: 'member' };
+    renderUserbox();
+    $('loginView').hidden = true;
+    $('appView').hidden = false;
+    $('due').value = todayStr();
+    await Promise.all([load(), loadPeople()]);
+    subscribe();
+  }
+
+  function stopApp() {
+    if (channel) { db.removeChannel(channel); channel = null; }
+    session = null; profile = null; actions = []; people = [];
+    $('appView').hidden = true;
+    $('usersPanel').hidden = true;
+    $('userbox').hidden = true;
+    showError(''); notify('');
+    $('loginView').hidden = false;
+    setStatus('wait', 'Signed out');
+  }
+
+  $('loginForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    var btn = e.submitter, err = $('loginError');
+    err.hidden = true;
+    btn.disabled = true;
+    var res = await db.auth.signInWithPassword({ email: toEmail($('loginUser').value), password: $('loginPass').value });
+    btn.disabled = false;
+    if (res.error) {
+      err.textContent = /invalid login/i.test(res.error.message) ? 'Wrong username or password.' : 'Could not sign in: ' + res.error.message;
+      err.hidden = false;
+      return;
+    }
+    $('loginPass').value = '';
+  });
+
+  $('btnOut').addEventListener('click', function () { db.auth.signOut(); });
+
+  $('btnPw').addEventListener('click', async function () {
+    var p = window.prompt('New password (at least 6 characters):');
+    if (p === null) return;
+    if (p.length < 6) return showError('Password must be at least 6 characters.');
+    var res = await db.auth.updateUser({ password: p });
+    if (res.error) return showError('Could not change password: ' + res.error.message);
+    showError(''); notify('Password changed.');
+  });
+
+  /* ---------- user management (admins) ---------- */
+  async function callFn(body) {
+    var r = await db.functions.invoke('manage-users', { body: body });
+    if (r.error) {
+      var msg = 'Something went wrong.';
+      try { var j = await r.error.context.json(); if (j && j.error) msg = j.error; } catch (e) { msg = r.error.message || msg; }
+      throw new Error(msg);
+    }
+    return r.data;
+  }
+
+  async function loadUsers() {
+    var res = await db.from('profiles').select('*').order('created_at', { ascending: true });
+    if (res.error) return fail(res.error, 'Could not load users.');
+    var list = $('userList'); list.innerHTML = '';
+    res.data.forEach(function (u) {
+      var row = el('div', 'urow');
+      row.appendChild(avatarEl(u.display_name, 40));
+      var info = el('div', 'info');
+      info.appendChild(el('b', null, u.display_name));
+      info.appendChild(el('div', null, u.username + ' · ' + u.role));
+      row.appendChild(info);
+      var btn = el('button', 'pillbtn', 'Reset password');
+      btn.type = 'button';
+      btn.addEventListener('click', async function () {
+        var p = window.prompt('New password for ' + u.display_name + ' (at least 6 characters):');
+        if (p === null) return;
+        if (p.length < 6) return showError('Password must be at least 6 characters.');
+        try { await callFn({ action: 'reset_password', id: u.id, password: p }); showError(''); notify('Password reset for ' + u.display_name + '.'); }
+        catch (err) { showError(err.message); }
+      });
+      row.appendChild(btn);
+      list.appendChild(row);
+    });
+  }
+
+  $('btnUsers').addEventListener('click', function () {
+    var p = $('usersPanel');
+    p.hidden = !p.hidden;
+    if (!p.hidden) loadUsers();
+  });
+  $('uName').addEventListener('input', function () {
+    var u = slug($('uName').value);
+    $('uHint').textContent = 'Username to sign in: ' + (u || '—');
+  });
+  $('userForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    var btn = e.submitter; btn.disabled = true;
+    try {
+      var r = await callFn({ action: 'create', name: $('uName').value, password: $('uPass').value, role: $('uRole').value });
+      showError('');
+      notify('User added. They sign in with username "' + r.username + '".');
+      $('uName').value = ''; $('uPass').value = 'password'; $('uRole').value = 'member'; $('uHint').textContent = 'Username to sign in: —';
+      loadUsers();
+    } catch (err) { showError(err.message); }
+    btn.disabled = false;
+  });
+
+  /* ---------- app form events ---------- */
   $('addForm').addEventListener('submit', async function (e) {
     e.preventDefault();
-    var text = $('what').value.trim(), owner = $('owner').value.trim(), due = $('due').value;
+    var text = $('what').value.trim(), owner = $('owner').value, due = $('due').value;
     if (!text || !owner || !due) return;
-    // reuse existing owner capitalisation
-    var existing = actions.filter(function (a) { return a.owner.toLowerCase() === owner.toLowerCase(); })[0];
-    if (existing) owner = existing.owner;
     var btn = e.submitter; if (btn) btn.disabled = true;
     var res = await db.from(TABLE).insert({ text: text, owner: owner, due: due }).select().single();
     if (btn) btn.disabled = false;
@@ -446,30 +654,25 @@
     }
   });
 
-  $('due').value = todayStr();
-  render();
-
+  /* ---------- boot ---------- */
   if (!window.supabase) {
+    $('loginView').hidden = false;
     setStatus('off', 'Offline');
-    showError('Could not load the Supabase library. Check your internet connection and reload.');
+    var le = $('loginError');
+    le.textContent = 'Could not load the Supabase library. Check your internet connection and reload.';
+    le.hidden = false;
     return;
   }
   db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-  setStatus('wait', 'Connecting…');
-  load();
-  loadPeople();
-
-  // Realtime: any insert/update/delete by anyone triggers a refresh
-  db.channel('meeting-actions-live')
-    .on('postgres_changes', { event: '*', schema: 'public', table: TABLE }, load)
-    .on('postgres_changes', { event: '*', schema: 'public', table: 'salespeople' }, loadPeople)
-    .subscribe(function (state) {
-      if (state === 'SUBSCRIBED') setStatus('live', 'Live');
-      else if (state === 'CHANNEL_ERROR' || state === 'TIMED_OUT' || state === 'CLOSED') setStatus('off', 'Reconnecting…');
-    });
-
-  // re-evaluate overdue status if the page stays open past midnight
-  setInterval(render, 60 * 60 * 1000);
+  // Keep this callback synchronous: calling Supabase from inside it can deadlock, so defer the work.
+  db.auth.onAuthStateChange(function (event, s) {
+    setTimeout(function () {
+      if (s && !session) startApp(s);
+      else if (s && session) session = s;      // token refreshed
+      else if (!s) stopApp();
+    }, 0);
+  });
+  setInterval(function () { if (session) render(); }, 60 * 60 * 1000);
 })();
 </script>
 </body>
